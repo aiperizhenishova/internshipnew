@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 
 import java.time.LocalDateTime;
 
@@ -29,5 +28,5 @@ public class TaskEntity {
     private TaskStatus status;
 
     @ManyToOne
-    private UserEntity user;
+    private WorkerEntity user;
 }
