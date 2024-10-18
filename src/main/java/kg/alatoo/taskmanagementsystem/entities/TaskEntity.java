@@ -30,6 +30,7 @@ public class TaskEntity {
     private TaskStatus status;
 
     @ManyToOne
-    private WorkerEntity user;
+    private WorkerEntity worker;
+    private LocalDateTime returnDate; //?
 
 }
