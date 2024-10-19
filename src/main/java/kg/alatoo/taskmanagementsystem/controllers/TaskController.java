@@ -1,7 +1,11 @@
 package kg.alatoo.taskmanagementsystem.controllers;
 
 
+import kg.alatoo.taskmanagementsystem.Dto.SuccessDto;
+import kg.alatoo.taskmanagementsystem.Dto.TaskUpdateDto;
 import kg.alatoo.taskmanagementsystem.entities.TaskEntity;
+import kg.alatoo.taskmanagementsystem.exceptions.ApiException;
+import kg.alatoo.taskmanagementsystem.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
@@ -35,18 +39,15 @@ public class TaskController {
     public TaskEntity update(@RequestBody TaskUpdateDto task, @PathVariable("id") Long id){
         TaskEntity toUpdate = taskRepository.findById(id).get();
 
-        if (task.getName() != null){
-            toUpdate.setName(task.getName());
-        }
 
         if (task.getTitle() != null){
             toUpdate.setTitle(task.getTitle());
         }
 
-
         if (task.getDescription() != null){
             toUpdate.setDescription(task.getDescription());
         }
+
 
         if (task.getCreatedAt() != null){
             toUpdate.setCreatedAt(task.getCreatedAt());

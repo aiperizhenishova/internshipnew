@@ -1,7 +1,9 @@
 package kg.alatoo.taskmanagementsystem.controllers;
 
 
+import kg.alatoo.taskmanagementsystem.Dto.WorkerDto;
 import kg.alatoo.taskmanagementsystem.entities.WorkerEntity;
+import kg.alatoo.taskmanagementsystem.repositories.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

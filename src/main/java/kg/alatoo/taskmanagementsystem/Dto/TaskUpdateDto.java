@@ -15,6 +15,8 @@ public class TaskUpdateDto {
 
     String description;
 
+    LocalDateTime createdAt;
+
     LocalDateTime deadline;
 
     TaskStatus status;

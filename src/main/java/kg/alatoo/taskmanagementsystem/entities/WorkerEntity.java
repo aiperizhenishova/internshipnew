@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -21,6 +23,7 @@ public class WorkerEntity {
 
     private Long id;
     private String fullName;
+    private LocalDateTime modifiedAt;
 
     @Email
     @Column(unique = true)
