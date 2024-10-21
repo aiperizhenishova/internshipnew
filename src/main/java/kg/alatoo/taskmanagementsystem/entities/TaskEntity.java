@@ -31,6 +31,5 @@ public class TaskEntity {
 
     @ManyToOne
     private WorkerEntity worker;
-    private LocalDateTime returnDate; //?
 
 }
