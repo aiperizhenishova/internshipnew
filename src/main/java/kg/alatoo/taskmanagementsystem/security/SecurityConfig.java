@@ -22,26 +22,33 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 public class SecurityConfig {
 
 
+
+
+    /*
+    private static final String[] AUTH_WHITELIST = {
+            "/trusted/**"
+    };*/
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();  // Создаем бин PasswordEncoder
+    }
+
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PasswordEncoder bCryptPassword;
 
-    private static final String[] AUTH_WHITELIST = {
-            "/trusted/**"
-    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.realmName("SMART_LIBRARY"));
+                .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.realmName("TASK_MANAGEMENT_SYSTEM"));
 
         return http.build();
     }
@@ -49,9 +56,10 @@ public class SecurityConfig {
     private AuthenticationProvider authenticationProvider() {
         final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userService);
-        authenticationProvider.setPasswordEncoder(bCryptPassword);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
 
 
 }

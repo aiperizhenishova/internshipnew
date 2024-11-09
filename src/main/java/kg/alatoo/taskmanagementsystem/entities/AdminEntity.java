@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-        name = "taskManagement_users",
+        name = "admin",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"username"})
         }
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserEntity {
+public class AdminEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

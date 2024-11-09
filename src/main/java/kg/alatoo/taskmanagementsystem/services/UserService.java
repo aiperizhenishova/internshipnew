@@ -1,13 +1,15 @@
 package kg.alatoo.taskmanagementsystem.services;
 
 import kg.alatoo.taskmanagementsystem.Dto.SignUpDto;
-import kg.alatoo.taskmanagementsystem.entities.UserEntity;
+import kg.alatoo.taskmanagementsystem.entities.AdminEntity;
 import kg.alatoo.taskmanagementsystem.exceptions.ApiException;
 import kg.alatoo.taskmanagementsystem.model.UserModel;
 import kg.alatoo.taskmanagementsystem.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,16 +23,18 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserService implements UserDetailsService {
 
+
     @Autowired
     private UserRepository userRepository;
 
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder bCryptPassword;
+
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByUsername(username)
+        AdminEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
 
         return new UserModel(
@@ -44,10 +48,10 @@ public class UserService implements UserDetailsService {
 
     public void saveUser(SignUpDto signUpDto) {
         log.info("Sign up user: {}", signUpDto.getUsername());
-        UserEntity userEntity = new UserEntity();
+        AdminEntity userEntity = new AdminEntity();
         userEntity.setName(signUpDto.getName());
         userEntity.setUsername(signUpDto.getUsername());
-        userEntity.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        userEntity.setPassword(bCryptPassword.encode(signUpDto.getPassword()));
 
         try {
             userRepository.save(userEntity);
