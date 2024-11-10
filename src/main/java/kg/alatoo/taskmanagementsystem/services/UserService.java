@@ -4,12 +4,10 @@ import kg.alatoo.taskmanagementsystem.Dto.SignUpDto;
 import kg.alatoo.taskmanagementsystem.entities.AdminEntity;
 import kg.alatoo.taskmanagementsystem.exceptions.ApiException;
 import kg.alatoo.taskmanagementsystem.model.UserModel;
-import kg.alatoo.taskmanagementsystem.repositories.UserRepository;
+import kg.alatoo.taskmanagementsystem.repositories.AdminRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +23,7 @@ public class UserService implements UserDetailsService {
 
 
     @Autowired
-    private UserRepository userRepository;
+    private AdminRepository userRepository;
 
 
     private PasswordEncoder bCryptPassword;

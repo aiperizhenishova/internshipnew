@@ -35,6 +35,7 @@ public class WorkerController {
     @PutMapping("/update/{id}")
     public WorkerEntity update(@RequestBody WorkerDto workerDto, @PathVariable Long id){
         WorkerEntity toUpdate = workerRepository.findById(id).get();
+
         if (workerDto.getFullName() != null){
             toUpdate.setFullName(workerDto.getFullName());
         }
