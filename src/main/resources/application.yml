@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/task_management
-    username: zhenishova
-    password: 123456
+    url: jdbc:postgresql://localhost:5432/entry
+    username: entry
+    password: 220903
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
@@ -11,3 +11,8 @@ spring:
 
   server:
     port: 8080
+
+  main:
+    allow-circular-references: true
+
+

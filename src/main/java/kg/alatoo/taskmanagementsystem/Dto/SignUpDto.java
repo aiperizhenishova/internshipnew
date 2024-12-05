@@ -28,6 +28,6 @@ public class SignUpDto {
     String email;
 
     @NotEmpty
-    private LocalDateTime modifiedAt;
+    LocalDateTime modifiedAt;
 
 }

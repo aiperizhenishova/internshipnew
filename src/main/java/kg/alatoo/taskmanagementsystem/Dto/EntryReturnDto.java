@@ -1,7 +1,5 @@
 package kg.alatoo.taskmanagementsystem.Dto;
 
-
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -12,12 +10,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TaskCheckOut {
+public class EntryReturnDto {
 
-    @NotNull(message = "workerId is required")
-    Long workerId;
+    Long userId;
 
-    @NotNull(message = "taskId is required")
-    Long taskId;
-
+    Long entryId;
 }

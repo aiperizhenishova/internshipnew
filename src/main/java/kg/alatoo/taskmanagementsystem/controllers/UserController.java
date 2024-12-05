@@ -1,13 +1,18 @@
 package kg.alatoo.taskmanagementsystem.controllers;
 
 
+import kg.alatoo.taskmanagementsystem.Dto.LoginDto;
+import kg.alatoo.taskmanagementsystem.Dto.SignUpDto;
 import kg.alatoo.taskmanagementsystem.Dto.SuccessDto;
 import kg.alatoo.taskmanagementsystem.Dto.UserDto;
+import kg.alatoo.taskmanagementsystem.entities.EntriesEntity;
 import kg.alatoo.taskmanagementsystem.entities.UserEntity;
 import kg.alatoo.taskmanagementsystem.exceptions.ApiException;
 import kg.alatoo.taskmanagementsystem.repositories.UserRepository;
+import kg.alatoo.taskmanagementsystem.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +24,20 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
+
+    /*
+    @GetMapping("/{userId}/favorites")
+    public List<EntriesEntity> getFavorites(@PathVariable Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getFavorites(); // возвращаем избранные записи
+    }
+     */
+
+
 
     @GetMapping("/get-all")
     public List<UserEntity> getAll(@RequestParam(value = "name", required = false) String name){
@@ -63,6 +82,21 @@ public class UserController {
         userRepository.deleteById(id);
         return new SuccessDto(true);
     }
+
+    // Регистрация пользователя
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody SignUpDto signUpDto) {
+        userService.saveUser(signUpDto);
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    // Логин пользователя
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+        String token = userService.loginUser(loginDto.getEmail(), loginDto.getPassword());
+        return ResponseEntity.ok(token);
+    }
+
 
 
 }

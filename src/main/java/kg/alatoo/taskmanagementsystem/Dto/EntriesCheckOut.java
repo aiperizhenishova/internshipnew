@@ -1,5 +1,7 @@
 package kg.alatoo.taskmanagementsystem.Dto;
 
+
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -10,9 +12,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TaskOverDueDto {
+public class EntriesCheckOut {
 
-    boolean isOverdue;
+    @NotNull(message = "userId is required")
+    Long userId;
 
-    String overduePeriod;
+    @NotNull(message = "entryId is required")
+    Long entryId;
+
 }

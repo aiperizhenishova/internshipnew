@@ -2,11 +2,15 @@ package kg.alatoo.taskmanagementsystem.controllers;
 
 import kg.alatoo.taskmanagementsystem.Dto.FavoriteDto;
 import kg.alatoo.taskmanagementsystem.Dto.SuccessDto;
+import kg.alatoo.taskmanagementsystem.Dto.UserFavoritesDto;
 import kg.alatoo.taskmanagementsystem.entities.EntriesEntity;
 import kg.alatoo.taskmanagementsystem.entities.FavoriteEntity;
 import kg.alatoo.taskmanagementsystem.entities.UserEntity;
 import kg.alatoo.taskmanagementsystem.exceptions.ApiException;
 import kg.alatoo.taskmanagementsystem.repositories.FavoriteRepository;
+import kg.alatoo.taskmanagementsystem.repositories.EntriesRepository;
+import kg.alatoo.taskmanagementsystem.repositories.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,31 @@ public class FavoriteController {
 
     @Autowired
     private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EntriesRepository entryRepository;
+
+
+    // Запрос избранных записей по имени пользователя (username)
+    @GetMapping("/username/{username}")
+    public UserFavoritesDto getUserFavorites(@PathVariable("username") String username) {
+        UserEntity userEntity = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ApiException("User not found", HttpStatusCode.valueOf(404)));
+
+        List<FavoriteEntity> favorites = favoriteRepository.findByUser(userEntity);
+
+        return new UserFavoritesDto(userEntity, favorites);
+    }
+
+
+
+
+
+
+
 
     @GetMapping("/get-all")
     public List<FavoriteEntity> getAll(){
@@ -51,7 +80,7 @@ public class FavoriteController {
         return favoriteRepository.save(favoriteEntity);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update{id}")
     public FavoriteEntity update(@RequestBody FavoriteDto favoriteDto, @PathVariable Long id){
         FavoriteEntity toUpdate = favoriteRepository.findById(id).orElseThrow(() -> new ApiException("Favorite entry not found", HttpStatusCode.valueOf(404)));
 
@@ -72,7 +101,7 @@ public class FavoriteController {
         return favoriteRepository.save(toUpdate);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("delete{id}")
     public SuccessDto delete(@PathVariable Long id) {
         favoriteRepository.deleteById(id);
         return new SuccessDto(true);
