@@ -8,16 +8,15 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class AdminDto {
+public class FavoriteDto {
 
     private Long id;
 
-    private String name;
-
+    private Long userId;
     private String username;
 
-    private String password;
+    private Long entryId;
+    private String entryTitle;
 
-    LocalDateTime createdAt;
 
 }

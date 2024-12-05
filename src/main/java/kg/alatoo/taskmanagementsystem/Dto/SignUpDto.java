@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,5 +25,9 @@ public class SignUpDto {
     String password;
 
     @NotEmpty
-    String name;
+    String email;
+
+    @NotEmpty
+    private LocalDateTime modifiedAt;
+
 }

@@ -24,9 +24,7 @@ public class UserModel implements UserDetails {
 
     String password;
 
-    String name;
-
-    LocalDateTime createdEntity;
+    LocalDateTime modifiedAt;
 
 
     @Override
