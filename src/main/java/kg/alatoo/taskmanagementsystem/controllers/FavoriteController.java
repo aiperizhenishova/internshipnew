@@ -30,7 +30,6 @@ public class FavoriteController {
     @Autowired
     private EntriesRepository entryRepository;
 
-
     // Запрос избранных записей по имени пользователя (username)
     @GetMapping("/username/{username}")
     public UserFavoritesDto getUserFavorites(@PathVariable("username") String username) {
@@ -42,35 +41,22 @@ public class FavoriteController {
         return new UserFavoritesDto(userEntity, favorites);
     }
 
-
-
-
-
-
-
-
     @GetMapping("/get-all")
-    public List<FavoriteEntity> getAll(){
+    public List<FavoriteEntity> getAll() {
         return favoriteRepository.findAll();
-
     }
 
     @GetMapping("get/{id}")
-    public FavoriteEntity getById (@PathVariable("id") Long id){
-        return favoriteRepository.findById(id).orElseThrow(() -> new ApiException("Favorite entry is" + id + "not found", HttpStatusCode.valueOf(404)));
+    public FavoriteEntity getById(@PathVariable("id") Long id) {
+        return favoriteRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Favorite entry with ID " + id + " not found", HttpStatusCode.valueOf(404)));
     }
-
 
     @PostMapping("/create")
     public FavoriteEntity create(@RequestBody FavoriteDto favoriteDto) {
         FavoriteEntity favoriteEntity = new FavoriteEntity();
 
-        if (favoriteDto.getUserId() != null) {
-            UserEntity user = userRepository.findById(favoriteDto.getUserId())
-                    .orElseThrow(() -> new ApiException("User not found", HttpStatusCode.valueOf(404)));
-            favoriteEntity.setUser(user);
-        }
-
+        // Убираем работу с userId
         if (favoriteDto.getEntryId() != null) {
             EntriesEntity entry = entryRepository.findById(favoriteDto.getEntryId())
                     .orElseThrow(() -> new ApiException("Entry not found", HttpStatusCode.valueOf(404)));
@@ -80,32 +66,24 @@ public class FavoriteController {
         return favoriteRepository.save(favoriteEntity);
     }
 
-    @PutMapping("/update{id}")
-    public FavoriteEntity update(@RequestBody FavoriteDto favoriteDto, @PathVariable Long id){
-        FavoriteEntity toUpdate = favoriteRepository.findById(id).orElseThrow(() -> new ApiException("Favorite entry not found", HttpStatusCode.valueOf(404)));
+    @PutMapping("/update/{id}")
+    public FavoriteEntity update(@RequestBody FavoriteDto favoriteDto, @PathVariable Long id) {
+        FavoriteEntity toUpdate = favoriteRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Favorite entry not found", HttpStatusCode.valueOf(404)));
 
-        if (favoriteDto.getUserId() != null){
-            UserEntity user = userRepository.findById(favoriteDto.getUserId())
-                    .orElseThrow(() -> new ApiException("User not found", HttpStatusCode.valueOf(404)));
-            toUpdate.setUser(user);
-        }
-
-        if (favoriteDto.getEntryId() != null){
+        // Убираем работу с userId
+        if (favoriteDto.getEntryId() != null) {
             EntriesEntity entry = entryRepository.findById(favoriteDto.getEntryId())
                     .orElseThrow(() -> new ApiException("Entry not found", HttpStatusCode.valueOf(404)));
             toUpdate.setEntries(entry);
         }
 
-
-
         return favoriteRepository.save(toUpdate);
     }
 
-    @DeleteMapping("delete{id}")
+    @DeleteMapping("/delete/{id}")
     public SuccessDto delete(@PathVariable Long id) {
         favoriteRepository.deleteById(id);
         return new SuccessDto(true);
     }
-
 }
-

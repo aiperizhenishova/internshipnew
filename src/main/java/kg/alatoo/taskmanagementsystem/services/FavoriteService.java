@@ -29,10 +29,11 @@ public class FavoriteService {
     public FavoriteDto toDto(FavoriteEntity favoriteEntity){
         return FavoriteDto.builder()
                 .id(favoriteEntity.getId())
-                .userId(favoriteEntity.getUser().getId())
-                .username(favoriteEntity.getUser().getUsername())
-                .entryId(favoriteEntity.getEntries().getId())
-                .entryTitle(favoriteEntity.getEntries().getTitle())
+                .title(favoriteEntity.getTitle())
+                .description(favoriteEntity.getDescription())
+                .updatedAt(favoriteEntity.getUpdatedAt())
+                .status(favoriteEntity.getStatus())
+                .entryId(favoriteEntity.getEntries() != null ? favoriteEntity.getEntries().getId() : null)  // Получаем ID записи
                 .build();
     }
 }

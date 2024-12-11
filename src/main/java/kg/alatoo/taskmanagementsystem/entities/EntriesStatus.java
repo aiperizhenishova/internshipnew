@@ -5,4 +5,5 @@ public enum EntriesStatus {
     PUBLISHED,  //опубликованная
     DELETED,    //удаленная
 
+    PENDING
 }

@@ -1,8 +1,11 @@
 package kg.alatoo.taskmanagementsystem.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import kg.alatoo.taskmanagementsystem.Dto.EntryDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +39,25 @@ public class UserEntity {
     @Email
     @Column(unique = true)
     private String email;
+
+    // Список записей, принадлежащих пользователю
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonManagedReference
+    private List<EntriesEntity> entries;  // Записи, созданные пользователем
+
+    // Список избранных записей пользователя
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonManagedReference
+    private List<FavoriteEntity> favorites;  // Избранные записи
+
+    private String imageUrl;
+
+
+
+
+
+
+
 
 
     /*

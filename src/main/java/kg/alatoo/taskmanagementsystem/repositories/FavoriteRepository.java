@@ -14,4 +14,8 @@ public interface FavoriteRepository extends JpaRepository<FavoriteEntity, Long> 
     List<FavoriteEntity> findAllByUser_UsernameContainingIgnoreCase(String username);
     List<FavoriteEntity> findByUser(UserEntity user);
 
+    List<FavoriteEntity> findAllByUserId(Long userId);
+
+    // Обновление картинки для пользователя
+    Optional<FavoriteEntity> findByIdAndUser(Long id, UserEntity user);
 }

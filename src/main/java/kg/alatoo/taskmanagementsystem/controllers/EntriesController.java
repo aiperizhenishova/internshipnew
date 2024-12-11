@@ -26,6 +26,7 @@ public class EntriesController {
 
     @GetMapping("/get-all")
     public List<EntriesEntity> getAll(){
+
         return entriesRepository.findAll();
     }
 
@@ -54,7 +55,7 @@ public class EntriesController {
         }
 
         if (task.getUpdatedAt() != null){
-            toUpdate.setUpdatedAt(task.getUpdatedAt().atStartOfDay());
+            toUpdate.setUpdatedAt(task.getUpdatedAt());
         }
 
         return entriesRepository.save(toUpdate);

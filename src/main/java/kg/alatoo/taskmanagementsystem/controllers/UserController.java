@@ -1,22 +1,32 @@
 package kg.alatoo.taskmanagementsystem.controllers;
 
 
-import kg.alatoo.taskmanagementsystem.Dto.LoginDto;
-import kg.alatoo.taskmanagementsystem.Dto.SignUpDto;
 import kg.alatoo.taskmanagementsystem.Dto.SuccessDto;
 import kg.alatoo.taskmanagementsystem.Dto.UserDto;
-import kg.alatoo.taskmanagementsystem.entities.EntriesEntity;
+import kg.alatoo.taskmanagementsystem.Dto.UserFavEntDto;
+import kg.alatoo.taskmanagementsystem.entities.FavoriteEntity;
 import kg.alatoo.taskmanagementsystem.entities.UserEntity;
 import kg.alatoo.taskmanagementsystem.exceptions.ApiException;
+import kg.alatoo.taskmanagementsystem.repositories.FavoriteRepository;
 import kg.alatoo.taskmanagementsystem.repositories.UserRepository;
 import kg.alatoo.taskmanagementsystem.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -28,30 +38,102 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FavoriteRepository favoriteRepository;
 
-    /*
-    @GetMapping("/{userId}/favorites")
-    public List<EntriesEntity> getFavorites(@PathVariable Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getFavorites(); // возвращаем избранные записи
+
+
+/*
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserEntity> getUser(@PathVariable Long userId) {
+        UserEntity user = userService.getUserWithEntries(userId);
+        return ResponseEntity.ok(user);
+    }
+ */
+
+
+
+
+
+
+
+    // Метод для получения всех пользователей с их избранными записями
+    /*@GetMapping("/get-all")
+    public List<UserFavEntDto> getAllUsersWithFavorites() {
+        List<UserEntity> userEntities = userService.getAllUsers(); // Получаем всех пользователей
+
+        // Конвертируем каждого пользователя в DTO
+        return userEntities.stream()
+                .map(userService::convertToUserFavEntDto)
+                .collect(Collectors.toList());
+    }
+
      */
-
-
-
     @GetMapping("/get-all")
-    public List<UserEntity> getAll(@RequestParam(value = "name", required = false) String name){
-        if (name != null){
-            return userRepository.findAllByUsernameContainingIgnoreCase(name);
-        }else {
-            return userRepository.findAll();
+    public List<UserFavEntDto> getAllUsersWithFavorites() {
+        List<UserEntity> userEntities = userService.getAllUsers(); // Получаем всех пользователей
+
+        // Конвертируем каждого пользователя в DTO с обработкой imageUrl
+        return userEntities.stream()
+                .map(user -> {
+                    // Проверка imageUrl, если он пустой или равен "no image", заменяем на стандартное изображение
+                    if (user.getImageUrl() == null || user.getImageUrl().equals("no image")) {
+                        user.setImageUrl("http://localhost:8080/images/default_image.png"); // Стандартное изображение
+                    }
+                    return userService.convertToUserFavEntDto(user);
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
+    private final String UPLOAD_DIR = "uploaded_images/";
+
+    @PostMapping("/{id}/uploadImage")
+    public ResponseEntity<String> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        try {
+            String fileName = file.getOriginalFilename();
+            Path path = Paths.get(UPLOAD_DIR + fileName);
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+            // Формируем URL для изображения
+            String imageUrl = "http://localhost:8080/uploaded_images/" + fileName;
+
+            // Сохраняем URL изображения в базе данных
+            UserEntity user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+            user.setImageUrl(imageUrl);
+            userRepository.save(user);
+
+            return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed");
         }
     }
 
-    @GetMapping("get/{id}")
-    public UserEntity getById (@PathVariable("id") Long id){
-        return userRepository.findById(id).orElseThrow(() -> new ApiException("User" + id + "not found", HttpStatusCode.valueOf(404)));
+
+
+
+
+    @PutMapping("/update-image/{userId}")
+    public ResponseEntity<Void> updateUserImage(@PathVariable Long userId, @RequestParam String imageUrl) {
+        userService.updateUserImage(userId, imageUrl);
+        return ResponseEntity.ok().build();
     }
+
+
+
+    @GetMapping("/get/{id}")
+    public UserFavEntDto getUserFavorites(@PathVariable Long id) {
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userService.convertToUserFavEntDto(userEntity);
+    }
+
 
     @PostMapping("/create")
     public UserEntity create (@RequestBody UserEntity userEntity){
@@ -72,6 +154,14 @@ public class UserController {
             toUpdate.setEmail(userDto.getEmail());
         }
 
+        if (userDto.getPassword() != null){
+            toUpdate.setPassword(userDto.getPassword());
+        }
+
+        if (userDto.getImageUrl() != null) { // Если есть ссылка на картинку, обновить
+            toUpdate.setImageUrl(userDto.getImageUrl());
+        }
+
         toUpdate.setModifiedAt(LocalDateTime.now());
         return userRepository.save(toUpdate);
     }
@@ -82,21 +172,6 @@ public class UserController {
         userRepository.deleteById(id);
         return new SuccessDto(true);
     }
-
-    // Регистрация пользователя
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody SignUpDto signUpDto) {
-        userService.saveUser(signUpDto);
-        return ResponseEntity.ok("User registered successfully");
-    }
-
-    // Логин пользователя
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-        String token = userService.loginUser(loginDto.getEmail(), loginDto.getPassword());
-        return ResponseEntity.ok(token);
-    }
-
 
 
 }

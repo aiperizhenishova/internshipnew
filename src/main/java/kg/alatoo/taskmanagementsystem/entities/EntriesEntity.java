@@ -1,7 +1,9 @@
 package kg.alatoo.taskmanagementsystem.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,18 +28,32 @@ public class EntriesEntity {
     private Long id;
     private String title;
     private String description;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
 
     @Enumerated(EnumType.STRING)
     private EntriesStatus status;
 
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
+    @JsonIgnore
     private UserEntity user;
+    //@JsonIgnore
+
+    private String image;
+
+    // Возвращаем URL изображения, если оно есть, или пустое значение, если нет
+    public String getImageUrl() {
+        return image != null && !image.isEmpty() ? "http://localhost:8080/uploaded_files/" + image : "";
+    }
+
 
 }
