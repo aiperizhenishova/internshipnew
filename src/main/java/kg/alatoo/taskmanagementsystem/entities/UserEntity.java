@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import kg.alatoo.taskmanagementsystem.Dto.EntryDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class UserEntity {
 
     private Long id;
 
+    @NotNull
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -53,6 +55,9 @@ public class UserEntity {
     private String imageUrl;
 
 
+    @Column(nullable = true)
+    private String resetToken;
+    private LocalDateTime resetTokenExpiryDate; // Для хранения времени жизни токена
 
 
 

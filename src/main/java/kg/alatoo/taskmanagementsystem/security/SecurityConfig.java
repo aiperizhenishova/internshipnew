@@ -32,7 +32,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();  // Создаем бин PasswordEncoder
+        return new BCryptPasswordEncoder();
     }
 
     @Autowired

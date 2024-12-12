@@ -1,2 +1,3 @@
-package kg.alatoo.taskmanagementsystem.services;public class JwtService {
+package kg.alatoo.taskmanagementsystem.services;
+public class JwtService {
 }

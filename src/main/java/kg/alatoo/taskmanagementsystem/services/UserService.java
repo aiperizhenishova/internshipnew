@@ -38,6 +38,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private JwtTokenService jwtTokenProvider;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
 
 
