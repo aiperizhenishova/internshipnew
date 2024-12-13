@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/entry
-    username: entry
-    password: 220903
+    url: jdbc:postgresql://junction.proxy.rlwy.net:39547/railway  # URL из DATABASE_PUBLIC_URL
+    username: postgres  # Имя пользователя из переменных
+    password: UperfiPnBxRHASJrBkoRTHGMEkVqPuCJ  # Пароль из переменных
+
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: update  # Устанавливает автогенерацию схемы (можно использовать: none, validate, update, create, create-drop)
+    show-sql: true  # Показывать SQL-запросы в логах
 
   server:
     port: 8080
